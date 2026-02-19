@@ -1,0 +1,79 @@
+# Containerd 설치 및 설정
+
+# Kubernetes 네트워킹을 위한 필수 커널 모듈 로드
+- name: containerd 및 k8s용 커널 모듈 활성화
+  become: yes
+  modprobe:
+    name: "{{ item }}"               # 모듈이름 (loop 내부의 값들이 여기에 들어감)
+    state: present
+  loop:                              # loop 안에 있는 이유 : loop 안쓰면 task 2개 만들어야 함
+    - overlay                        # docker의 image layer와 container layer를 합치는 역할
+    - br_netfilter                   # 리눅스의 방화벽이 패킷을 뜯어서 조작할 수 있게 해주는 모듈 (K8S 내부 내트워킹에 사용)
+
+
+# 패킷 포워딩 및 iptables 설정
+- name: sysctl 파라미터 설정
+  become: yes
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: yes
+  loop:
+    - { name: 'net.ipv4.ip_forward', value: '1' }                                 # 패킷 포워딩 활성화 (Linux Netfilter의 FORWARD 체인 활성화)
+    - { name: 'net.bridge.bridge-nf-call-iptables', value: '1' }                  # netfilter가 네트워크 트래픽을 처리하도록 설정 (Linux Netfilter의 Filter 테이블과 NAT 테이블 활성화)
+    - { name: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }                 # 위에꺼의 IPv6 버전
+
+# containerd 설치를 위한 패키지 저장소 설정
+- name: 필수 패키지 설치
+  become: yes
+  apt:
+    name: [ca-certificates, curl, gnupg, lsb-release]                             # ca-certificates: HTTPS 통신을 위한 인증서, curl: 파일 다운로드, gnupg: GPG 키 관리, lsb-release: 배포판 정보 확인
+    state: present
+
+- name: Docker 공식 GPG 키 추가 (containerd.io 패키지가 여기에 있음)
+  become: yes
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Docker 공식 저장소 추가
+  become: yes
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+
+# containerd 설치
+- name: Install containerd
+  become: yes
+  apt:
+    name: containerd.io
+    state: present
+    update_cache: yes
+
+# containerd 설정 파일 생성
+- name: Create containerd configuration directory
+  become: yes
+  file:
+    path: /etc/containerd
+    state: directory
+    mode: '0755'
+
+- name: Generate default containerd configuration
+  become: yes
+  shell: containerd config default > /etc/containerd/config.toml               # containerd의 기본 설정을 생성하여 /etc/containerd/config.toml에 저장
+
+- name: Systemd Group
+  become: yes
+  replace:
+    path: /etc/containerd/config.toml
+    regexp: 'SystemdCgroup = false'
+    replace: 'SystemdCgroup = true'
+
+# containerd 서비스 시작 및 활성화
+- name: Containerd 서비스 재시작
+  become: yes
+  systemd:
+    name: containerd
+    state: restarted
+    enabled: yes

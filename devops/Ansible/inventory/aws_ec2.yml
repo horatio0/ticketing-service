@@ -1,0 +1,28 @@
+# AWS에 직접 접속해서 실시간 EC2 목록을 가져옴
+plugin: aws_ec2
+regions:
+  - ap-northeast-2
+
+# EKS 클러스터 내부 노드만 필터링 (Terraform 태그 기반)
+filters:
+  "tag:Project": ticketing
+  "tag:Environment": prod
+  "tag:Role": eks-node
+  instance-state-name: running
+
+# 그룹 자동 분류 (Node Group별로 역할 분리 시 사용)
+keyed_groups:
+  - key: tags.Role
+    prefix: role
+    separator: _
+
+  - key: tags.Environment
+    prefix: env
+    separator: _
+
+# 접속 설정
+hostnames:
+  - private-ip-address               # 인벤토리에서 호스트 이름으로 사용할 EC2의 프라이빗 IP 주소
+
+compose:
+  ansible_host: private-ip-address   # Ansible이 EC2 인스턴스에 접속할 때 사용할 IP 주소 (AWS가 알아서 넣어줌)

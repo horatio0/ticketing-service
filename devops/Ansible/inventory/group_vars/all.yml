@@ -1,0 +1,6 @@
+# SSH 접속 사용자
+ansible_user: ubuntu
+
+# 전역 변수
+project_name: "ticketing"
+environment: "prod"

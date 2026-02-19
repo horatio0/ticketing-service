@@ -1,0 +1,173 @@
+# ===================================================
+# Java / Spring Boot
+# ===================================================
+*.class
+*.jar
+!/backend/gradle/wrapper/gradle-wrapper.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+*.ctxt
+.mtj.tmp/
+hs_err_pid*
+replay_pid*
+
+# ===================================================
+# Gradle
+# ===================================================
+.gradle/
+backend/.gradle/
+build/
+backend/build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/gradle-wrapper.jar
+
+# ===================================================
+# IntelliJ IDEA
+# ===================================================
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+backend/.idea/
+backend/*.iml
+
+# ===================================================
+# Spring Boot - 민감 정보 포함 가능한 설정 파일
+# ===================================================
+backend/src/main/resources/application-local.yaml
+backend/src/main/resources/application-local.yml
+backend/src/main/resources/application-prod.yaml
+backend/src/main/resources/application-prod.yml
+backend/src/main/resources/application-secret.yaml
+backend/src/main/resources/application-secret.yml
+
+# ===================================================
+# Terraform
+# ===================================================
+# 다운로드된 프로바이더/모듈 캐시
+**/.terraform/
+# 상태 파일 (클라우드 인프라 민감 정보 포함)
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+# 플랜 파일
+*.tfplan
+terraform.plan
+# 민감 변수 파일
+*.tfvars
+!*.tfvars.example
+# 크래시 로그
+crash.log
+crash.*.log
+# 오버라이드 파일
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# ===================================================
+# Ansible
+# ===================================================
+# 실패한 호스트 재시도 파일
+*.retry
+# Ansible Vault 패스워드 파일
+vault_pass.txt
+vault_password.txt
+.vault_pass
+.vault_password
+# 동적 인벤토리 캐시
+devops/Ansible/inventory/*.cache
+# 서버 IP/도메인이 기록된 실제 인벤토리 (보안)
+# devops/Ansible/inventory/hosts.ini  ← 실서버 정보 기재 시 주석 해제
+
+# ===================================================
+# Kubernetes / kubectl
+# ===================================================
+kubeconfig
+*.kubeconfig
+.kube/
+# Helm 차트 의존성 다운로드 캐시
+charts/
+devops/Kubernetes/helm/**/charts/
+# Helm 릴리스 시크릿
+*-secret-values.yaml
+*-secret-values.yml
+
+# ===================================================
+# 인증서 / 키 / 자격증명 (절대 커밋 금지)
+# ===================================================
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+*.truststore
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.cer
+*.crt
+
+# ===================================================
+# 환경 변수 / 시크릿 파일
+# ===================================================
+.env
+.env.*
+!.env.example
+secrets.yaml
+secrets.yml
+secret.yaml
+secret.yml
+*-secrets.yaml
+*-secrets.yml
+
+# ===================================================
+# AWS / 클라우드 자격증명
+# ===================================================
+.aws/
+credentials
+aws_credentials
+terraform.tfvars
+
+# ===================================================
+# Docker
+# ===================================================
+.docker/
+docker-compose.override.yml
+
+# ===================================================
+# OS 생성 파일
+# ===================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ===================================================
+# 에디터 / IDE
+# ===================================================
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ===================================================
+# 로그 / 임시 파일
+# ===================================================
+*.log
+logs/
+tmp/
+temp/

@@ -1,0 +1,2 @@
+1. terraform output으로 ansible 그룹 변수 파일 생성할 것
+2. ec2 만들 때 AmazonEKSWorkerNodePolicy 권한 줘야함. (EKS에 노드 등록 시 필요)

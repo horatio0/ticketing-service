@@ -1,0 +1,17 @@
+# 구성한 인프라를 EKS 노드로 등록하는 작업을 수행
+
+- name: Add EKS node to cluster
+  become: yes
+  shell: |                                     # AWS에서 제공하는 bootstrap.sh 스크립트를 사용하여 노드를 EKS 클러스터에 등록
+    /etc/eks/bootstrap.sh {{ cluster_name }} \
+      --container-runtime containerd \
+      --kubelet-extra-args '--node-labels=role=eks-node,env={{ environment }}'
+  args:
+    creates: /var/lib/kubelet/kubeconfig       # 해당 파일이 존재하면 이미 노드가 클러스터에 등록된 것으로 간주하여 작업을 건너뜀
+
+- name: Kubelet Service Start
+  become: yes
+  systemd:
+    name: kubelet
+    state: started
+    enabled: yes

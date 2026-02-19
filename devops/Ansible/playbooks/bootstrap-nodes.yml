@@ -1,0 +1,4 @@
+# 신규 노드 초기화
+- name: Initialize new nodes
+  hosts: newNodes
+  

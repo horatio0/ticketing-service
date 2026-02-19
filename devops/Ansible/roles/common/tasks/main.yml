@@ -1,0 +1,28 @@
+# 모든 서버가 기본으로 가져야할 공통 설정
+
+# 패키지 업데이트
+- name: Update apt
+  become: yes
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600         # 1시간 내에 다시 실행하면 캐시 재사용
+
+# 공통 패키지 설치
+- name: Install common packages
+  become: yes
+  apt:
+    name:
+      - curl
+      - git
+      - vim
+      - unzip
+      - tar
+      - net-tools
+      - jq                         # JSON 처리 도구 (AWS CLI 출력 파싱용)
+    state: present
+
+# 타임존 설정
+- name: Set Timezone
+  become: yes
+  timezone:
+    name: Asia/Seoul
