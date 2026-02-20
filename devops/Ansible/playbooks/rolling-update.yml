@@ -1,1 +1,44 @@
-# 무중단 업데이트
+# 무중단 업데이트 용
+
+- name: Rolling Update
+  hosts: tag_role_eks_node
+  become: yes
+
+  serial: 1                                           # !!매우 중요!! 한 번에 하나씩 업데이트
+
+  tasks:
+
+    ### 업데이트 전 파드 격리 작업 ###
+    - name: Cordon                                    # 업데이트 중인 노드 격리
+      shell: kubectl cordon {{ inventory_hostname }}  # inventory_hostname : Ansible이 작업중인 타겟 서버의 이름 (기본 제공)
+      delegate_to: localhost
+      become: no
+
+    - name: Drain                                     # 기존 파드를 다른 노드로 이동
+      shell: >                                        # 시스템 파드 제외, 임시 로컬 저장소 삭제, 이동 전 여유 시간 60초
+        kubectl drain {{ inventory_hostname }}
+        --ignore-daemonsets
+        --delete-emptydir-data
+        --force
+        --grace-period=60
+      delegate_to: localhost                          # 명령어 실행 위치
+      become: no
+
+    ### 실제 OS 업데이트 및 재부팅 작업 ###
+    - name: Apt Update
+      apt:
+        upgrade: dist
+        update_cache: yes
+
+    - name: Reboot Node
+      reboot:
+        msg: "Reboot initiated by Ansible for rolling update"
+        connect_timeout: 5
+        reboot_timeout: 300
+        post_reboot_delay: 30
+
+    ### 업데이트 후 노드 복구 작업 ###
+    - name: Uncordon Node
+      shell: kubectl uncordon {{ inventory_hostname }}
+      delegate_to: localhost
+      become: no

@@ -1,4 +1,14 @@
 # 신규 노드 초기화
-- name: Initialize new nodes
-  hosts: newNodes
-  
+# 신규 워커 노드가 생성되면 이 플레이북을 실행하여 초기 설정을 수행
+
+- name: Bootstrap new worker nodes
+  hosts: tag_role_eks_node                # aws_ec2.yml 에서 생성한 노드 그룹
+  become: yes
+  gather_facts: yes                       # 노드의 시스템 정보 수집
+  roles:
+    - role: common
+      tags: ['common', 'init']            # 태그별로 역할 실행 제어 가능 (예: --tags common)
+    - role: containerd
+      tags: ['containerd', 'runtime']
+    - role: eks-node
+      tags: ['eks', 'join']
