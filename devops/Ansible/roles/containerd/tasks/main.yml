@@ -1,3 +1,7 @@
+
+#### 이 Role은 AWS에서 제공하는 EKS 최적화 AMI에서는 필요 없음 ####
+
+
 # Containerd 설치 및 설정
 
 # Kubernetes 네트워킹을 위한 필수 커널 모듈 로드

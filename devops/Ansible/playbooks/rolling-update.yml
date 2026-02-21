@@ -1,7 +1,7 @@
 # 무중단 업데이트 용
 
 - name: Rolling Update
-  hosts: tag_role_eks_node
+  hosts: role_eks_node
   become: yes
 
   serial: 1                                           # !!매우 중요!! 한 번에 하나씩 업데이트

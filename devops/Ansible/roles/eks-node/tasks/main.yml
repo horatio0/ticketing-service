@@ -1,3 +1,7 @@
+
+#### 이 Role은 AWS에서 제공하는 EKS 최적화 AMI에서는 필요 없음 ####
+
+
 # 구성한 인프라를 EKS 노드로 등록하는 작업을 수행
 
 - name: Add EKS node to cluster
