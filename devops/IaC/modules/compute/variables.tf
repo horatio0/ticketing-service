@@ -3,9 +3,14 @@ variable "vpc_id" {
   description = "vpc id from network module"
 }
 
+variable "env" {
+  type    = string
+  default = "prod"
+}
+
 variable "cluster_name" {
   type    = string
-  default = "hello_k8s"
+  default = "hello-k8s"
 }
 
 variable "k8s_version" {
@@ -18,7 +23,8 @@ variable "node_policy_list" {
   default = [
     "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
     "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   ]
 }
 

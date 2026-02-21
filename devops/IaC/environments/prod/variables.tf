@@ -1,4 +1,4 @@
 variable "aws_region" {
     type = string
-    default = "ap-northease-2"
+    default = "ap-northeast-2"
 }

@@ -2,7 +2,7 @@
 
 # EKS master node용 IAM Role
 resource "aws_iam_role" "cluster" {
-  name = "${var.cluster_name}-cluster-node"
+  name = "${var.cluster_name}-cluster-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -106,4 +106,10 @@ resource "aws_eks_node_group" "main" {
   depends_on = [
     aws_iam_role_policy_attachment.node_policy
   ]
+
+  tags = {
+    "Project"     = "ticketing"
+    "Environment" = var.env
+    "Role"        = "eks-node"
+  }
 }

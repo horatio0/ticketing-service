@@ -25,9 +25,10 @@
       become: no
 
     ### 실제 OS 업데이트 및 재부팅 작업 ###
-    - name: Apt Update
-      apt:
-        upgrade: dist
+    - name: Dnf Update
+      dnf:
+        name: '*'
+        state: latest
         update_cache: yes
 
     - name: Reboot Node

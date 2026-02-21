@@ -41,15 +41,26 @@ resource "aws_subnet" "public" {
   }
 }
 
-resource "aws_subnet" "private" {
-  count             = length(var.private_subnets)
+resource "aws_subnet" "private_app" {
+  count             = length(var.app_private_subnets)
   vpc_id            = aws_vpc.main.id
-  cidr_block        = var.private_subnets[count.index]
+  cidr_block        = var.app_private_subnets[count.index]
   availability_zone = var.az[count.index]
 
   tags = {
-    Name                              = "${var.env}-private-subnet-${count.index + 1}"
+    Name                              = "${var.env}-app-subnet-${count.index + 1}"
     "kubernetes.io/role/internal-elb" = "1"
+  }
+}
+
+resource "aws_subnet" "private_db" {
+  count             = length(var.db_private_subnets)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.db_private_subnets[count.index]
+  availability_zone = var.az[count.index]
+
+  tags = {
+    Name = "${var.env}-db-subnet-${count.index + 1}"
   }
 }
 
@@ -62,13 +73,18 @@ resource "aws_route_table" "public" {
   tags = { Name = "${var.env}-rt-public" }
 }
 
-resource "aws_route_table" "private" {
+resource "aws_route_table" "private_app" {
   vpc_id = aws_vpc.main.id
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.main.id
   }
-  tags = { Name = "${var.env}-rt-private" }
+  tags = { Name = "${var.env}-rt-app" }
+}
+
+resource "aws_route_table" "private_db" {
+  vpc_id = aws_vpc.main.id
+  tags   = { Name = "${var.env}-rt-db" }
 }
 
 resource "aws_route_table_association" "public" {
@@ -77,8 +93,14 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-resource "aws_route_table_association" "private" {
-  count          = length(var.private_subnets)
-  subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private.id
+resource "aws_route_table_association" "private_app" {
+  count          = length(var.app_private_subnets)
+  subnet_id      = aws_subnet.private_app[count.index].id
+  route_table_id = aws_route_table.private_app.id
+}
+
+resource "aws_route_table_association" "private_db" {
+  count          = length(var.db_private_subnets)
+  subnet_id      = aws_subnet.private_db[count.index].id
+  route_table_id = aws_route_table.private_db.id
 }
