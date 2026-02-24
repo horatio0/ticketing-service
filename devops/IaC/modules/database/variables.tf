@@ -1,6 +1,5 @@
 variable "env" {
   type    = string
-  default = "prod"
 }
 
 variable "db_subnets_id" {

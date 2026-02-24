@@ -5,7 +5,6 @@ variable "vpc_id" {
 
 variable "env" {
   type    = string
-  default = "prod"
 }
 
 variable "cluster_name" {

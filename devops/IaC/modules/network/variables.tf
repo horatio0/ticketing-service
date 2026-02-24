@@ -7,7 +7,6 @@ variable "vpc_cidr" {
 variable "env" {
   description = "Environment"
   type        = string
-  default     = "prod"
 }
 
 variable "az" {
